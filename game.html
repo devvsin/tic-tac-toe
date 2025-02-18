@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1c20 0%, #283593 100%);
+            color: #ffffff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .message {
+            text-align: center;
+            font-size: 28px;
+            margin: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            gap: 10px;
+            margin: 20px auto;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .cell {
+            width: 120px;
+            height: 120px;
+            border: none;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+        }
+
+        .cell.winner-x {
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.5), rgba(255, 142, 83, 0.5));
+            animation: winPulse 2s infinite;
+        }
+
+        .cell.winner-o {
+            background: linear-gradient(45deg, rgba(83, 142, 255, 0.5), rgba(107, 107, 255, 0.5));
+            animation: winPulse 2s infinite;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .reset-btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #FF8E53, #FF6B6B);
+        }
+
+        .reset-btn:active {
+            transform: translateY(1px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes winPulse {
+            0% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .current-player {
+            animation: pulse 2s infinite;
+            color: #FF8E53;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .show-reset {
+            animation: fadeIn 0.5s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="message">
+            {% if message %}
+                {{ message }}
+            {% else %}
+                Current Player: <span class="current-player">{{ current_player }}</span>
+            {% endif %}
+        </div>
+        
+        <div class="board">
+            {% for i in range(3) %}
+                {% for j in range(3) %}
+                    <a href="{{ url_for('play', row=i, col=j) }}" 
+                       class="cell {% if (i, j) in winning_cells %}winner-{{ board[i][j].lower() }}{% endif %}">
+                        {{ board[i][j] }}
+                    </a>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        
+        <div class="controls {% if show_reset %}show-reset{% endif %}">
+            <a href="{{ url_for('reset') }}" class="reset-btn">New Game</a>
+        </div>
+    </div>
+</body>
+</html>
